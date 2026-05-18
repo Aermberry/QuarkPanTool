@@ -1,5 +1,4 @@
 import os
-import subprocess
 import time
 from typing import Dict, Union, List
 from playwright.sync_api import sync_playwright
@@ -25,17 +24,19 @@ class QuarkLogin:
     @retry
     def login(self) -> None:
 
-        #print("正在进行Playwright初始化...")
-        #os.environ['PLAYWRIGHT_BROWSERS_PATH'] = '0'
-        #result = subprocess.run(['playwright', 'install', 'firefox'])
-        #if result.returncode != 0:
-        #    print("Playwright 安装失败！")
+        # print("正在进行Playwright初始化...")
+        # os.environ['PLAYWRIGHT_BROWSERS_PATH'] = '0'
+        # result = subprocess.run(['playwright', 'install', 'firefox'])
+        # if result.returncode != 0:
+        #     print("Playwright 安装失败！")
 
         with sync_playwright() as p:
             self.context = p.firefox.launch_persistent_context(
-                './gpts_firefox_dir',
+                './web_browser_data',
                 headless=self.headless,
-                slow_mo=self.slow_mo
+                slow_mo=self.slow_mo,
+                args=['--start-maximized'],
+                no_viewport=True
             )
             page = self.context.pages[0]
             page.goto('https://pan.quark.cn/')
@@ -105,4 +106,5 @@ if __name__ == '__main__':
     quark_login = QuarkLogin(headless=False, slow_mo=500)
     quark_login.login()
     cookies = quark_login.get_cookies()
-    print('Cookie:', cookies)
+    # print('Cookie:', cookies)
+    print('登录完成！')
